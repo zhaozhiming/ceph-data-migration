@@ -1,16 +1,42 @@
 package com.github.zzm.migration.util;
 
 import com.github.zzm.migration.model.Gateway;
+import com.github.zzm.migration.model.User;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
-import com.jcraft.jsch.*;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 public class SshUtil {
 
-    public static String exec(String command, Gateway gateway) throws JSchException {
+    public static List<String> listBuckets() throws IOException {
+        User user = YamlUtil.parseUser();
+        Gateway sourceRgw = YamlUtil.parseSourceRgw();
+        String command = "sudo /usr/bin/radosgw-admin bucket list --uid=%s --name=client.radosgw.gateway";
+        String result = exec(String.format(command, user.getUid()), sourceRgw);
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(result, new TypeReference<List<String>>() {});
+    }
+
+    public static boolean checkUserExist() {
+        User user = YamlUtil.parseUser();
+        Gateway targetRgw = YamlUtil.parseTargetRgw();
+        String command = "sudo /usr/bin/radosgw-admin user info --uid=%s --name=client.radosgw.gateway";
+        String result = exec(String.format(command, user.getUid()), targetRgw);
+        System.out.println(result);
+        return result.contains(user.getUid());
+    }
+
+    private static String exec(String command, Gateway gateway) {
         Session session = null;
         Channel channel = null;
         try {
