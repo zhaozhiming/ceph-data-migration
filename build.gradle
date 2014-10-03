@@ -6,8 +6,6 @@ compileJava {
     targetCompatibility = 1.6
 }
 
-repositories {
-    maven {
-        url "http://maven.oschina.net/content/groups/public/"
-    }
+dependencies {
+    compile fileTree(dir: 'lib', include: ['*.jar'])
 }
