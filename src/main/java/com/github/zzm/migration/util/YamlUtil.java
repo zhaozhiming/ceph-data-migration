@@ -8,20 +8,28 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 public class YamlUtil {
-    public static User parseUser() throws FileNotFoundException {
-        return parse("user.yml", User.class);
+    private static User user = parse("user.yml", User.class);
+    private static Gateway sourceRgw = parse("source_rgw.yml", Gateway.class);
+    private static Gateway targetRgw = parse("target_rgw.yml", Gateway.class);
+
+    public static User parseUser() {
+        return user;
     }
 
-    public static Gateway parseSourceRgw() throws FileNotFoundException {
-        return parse("source_rgw.yml", Gateway.class);
+    public static Gateway parseSourceRgw() {
+        return sourceRgw;
     }
 
-    public static Gateway parseTargetRgw() throws FileNotFoundException {
-        return parse("target_rgw.yml", Gateway.class);
+    public static Gateway parseTargetRgw() {
+        return targetRgw;
     }
 
-    private static <T> T parse(String fileName, Class<T> iclass) throws FileNotFoundException {
-        InputStream inputStream = ClassLoader.getSystemResourceAsStream(fileName);
-        return Yaml.loadType(inputStream, iclass);
+    private static <T> T parse(String fileName, Class<T> iclass) {
+        try {
+            InputStream inputStream = ClassLoader.getSystemResourceAsStream(fileName);
+            return Yaml.loadType(inputStream, iclass);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(String.format("parse yaml file failed. file: %s.", fileName));
+        }
     }
 }
