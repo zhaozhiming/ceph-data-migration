@@ -9,25 +9,11 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
 
-public class SchExecutor {
-
-    public static List<String> listBuckets() throws IOException {
-        User user = YamlParser.getUser();
-        String command = String.format("sudo /usr/bin/radosgw-admin bucket list --uid=%s " +
-                "--name=client.radosgw.gateway", user.getUid());
-        String result = exec(command, YamlParser.getSourceRgw());
-        System.out.println(String.format("bucket list:%s", result));
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(result, new TypeReference<List<String>>() {});
-    }
+public class ShellExecutor {
 
     public static boolean checkUserExist() {
         User user = YamlParser.getUser();
@@ -41,7 +27,7 @@ public class SchExecutor {
     public static boolean createUser() {
         User user = YamlParser.getUser();
         String command = String.format("sudo /usr/bin/radosgw-admin user create --uid=%s " +
-                "--display-name=%s --access-key=%s --secret=%s --name=client.radosgw.gateway",
+                        "--display-name=%s --access-key=%s --secret=%s --name=client.radosgw.gateway",
                 user.getUid(), user.getDisplayName(), user.getAccessKey(), user.getSecretKey());
         String result = exec(command, YamlParser.getTargetRgw());
         System.out.println(String.format("user info: %s", result));
