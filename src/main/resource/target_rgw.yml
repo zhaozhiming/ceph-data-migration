@@ -1,0 +1,4 @@
+url: http://192.168.42.2:80
+host: 192.168.42.2
+user: vagrant
+password: vagrant
