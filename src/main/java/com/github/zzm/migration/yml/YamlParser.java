@@ -1,4 +1,4 @@
-package com.github.zzm.migration.util;
+package com.github.zzm.migration.yml;
 
 import com.github.zzm.migration.model.Gateway;
 import com.github.zzm.migration.model.User;
@@ -7,20 +7,20 @@ import org.ho.yaml.Yaml;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-public class YamlUtil {
+public class YamlParser {
     private static User user = parse("user.yml", User.class);
     private static Gateway sourceRgw = parse("source_rgw.yml", Gateway.class);
     private static Gateway targetRgw = parse("target_rgw.yml", Gateway.class);
 
-    public static User parseUser() {
+    public static User getUser() {
         return user;
     }
 
-    public static Gateway parseSourceRgw() {
+    public static Gateway getSourceRgw() {
         return sourceRgw;
     }
 
-    public static Gateway parseTargetRgw() {
+    public static Gateway getTargetRgw() {
         return targetRgw;
     }
 

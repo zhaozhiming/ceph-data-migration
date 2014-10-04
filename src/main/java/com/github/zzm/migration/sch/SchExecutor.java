@@ -1,7 +1,8 @@
-package com.github.zzm.migration.util;
+package com.github.zzm.migration.sch;
 
 import com.github.zzm.migration.model.Gateway;
 import com.github.zzm.migration.model.User;
+import com.github.zzm.migration.yml.YamlParser;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.jcraft.jsch.Channel;
@@ -16,33 +17,33 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
-public class SshUtil {
+public class SchExecutor {
 
     public static List<String> listBuckets() throws IOException {
-        User user = YamlUtil.parseUser();
+        User user = YamlParser.getUser();
         String command = String.format("sudo /usr/bin/radosgw-admin bucket list --uid=%s " +
                 "--name=client.radosgw.gateway", user.getUid());
-        String result = exec(command, YamlUtil.parseSourceRgw());
+        String result = exec(command, YamlParser.getSourceRgw());
         System.out.println(String.format("bucket list:%s", result));
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(result, new TypeReference<List<String>>() {});
     }
 
     public static boolean checkUserExist() {
-        User user = YamlUtil.parseUser();
+        User user = YamlParser.getUser();
         String command = String.format("sudo /usr/bin/radosgw-admin user info --uid=%s " +
                 "--name=client.radosgw.gateway", user.getUid());
-        String result = exec(command, YamlUtil.parseTargetRgw());
+        String result = exec(command, YamlParser.getTargetRgw());
         System.out.println(String.format("user info: %s", result));
         return result.contains(user.getUid());
     }
 
     public static boolean createUser() {
-        User user = YamlUtil.parseUser();
+        User user = YamlParser.getUser();
         String command = String.format("sudo /usr/bin/radosgw-admin user create --uid=%s " +
                 "--display-name=%s --access-key=%s --secret=%s --name=client.radosgw.gateway",
                 user.getUid(), user.getDisplayName(), user.getAccessKey(), user.getSecretKey());
-        String result = exec(command, YamlUtil.parseTargetRgw());
+        String result = exec(command, YamlParser.getTargetRgw());
         System.out.println(String.format("user info: %s", result));
         return result.contains(user.getUid());
     }

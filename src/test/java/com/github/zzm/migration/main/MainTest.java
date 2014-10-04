@@ -1,9 +1,7 @@
 package com.github.zzm.migration.main;
 
-import com.github.zzm.migration.util.SshUtil;
+import com.github.zzm.migration.sch.SchExecutor;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class MainTest {
 
@@ -12,6 +10,6 @@ public class MainTest {
     public void should_() throws Exception {
 //        System.out.println(SshUtil.listBuckets());
 //        System.out.println(SshUtil.checkUserExist());
-        System.out.println(SshUtil.createUser());
+        System.out.println(SchExecutor.createUser());
     }
 }
