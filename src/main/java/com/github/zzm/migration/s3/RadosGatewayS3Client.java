@@ -6,9 +6,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.List;
 
 public class RadosGatewayS3Client {
@@ -16,7 +15,7 @@ public class RadosGatewayS3Client {
 
     public RadosGatewayS3Client(String accessKey, String secretKey, String hostname) {
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
-        connect= new AmazonS3Client(credentials);
+        connect = new AmazonS3Client(credentials);
         connect.setEndpoint(hostname);
     }
 
@@ -32,21 +31,13 @@ public class RadosGatewayS3Client {
         return connect.listObjects(bucketName);
     }
 
-    public PutObjectResult putObject(File file, Bucket bucket) throws FileNotFoundException {
+    public PutObjectResult putObject(String bucketName, String fileName, InputStream inputStream) throws FileNotFoundException {
         return connect.putObject(
-                bucket.getName(), file.getName(), new FileInputStream(file), new ObjectMetadata());
+                bucketName, fileName, inputStream, new ObjectMetadata());
     }
 
     public S3Object getObject(String bucketName, String objectName) {
         return connect.getObject(bucketName, objectName);
-    }
-
-    public ObjectMetadata downloadObject(String bucketName, String objectName, File downloadFile) {
-        return connect.getObject(new GetObjectRequest(bucketName, objectName), downloadFile);
-    }
-
-    public void deleteObject(String bucketName, String fileName) {
-        connect.deleteObject(bucketName, fileName);
     }
 
     public boolean isBucketExist(String bucketName) {
