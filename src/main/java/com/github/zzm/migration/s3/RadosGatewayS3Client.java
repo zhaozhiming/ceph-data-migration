@@ -28,8 +28,8 @@ public class RadosGatewayS3Client {
         return connect.createBucket(bucketName);
     }
 
-    public ObjectListing listObjects(Bucket bucket) {
-        return connect.listObjects(bucket.getName());
+    public ObjectListing listObjects(String bucketName) {
+        return connect.listObjects(bucketName);
     }
 
     public PutObjectResult putObject(File file, Bucket bucket) throws FileNotFoundException {
@@ -49,14 +49,13 @@ public class RadosGatewayS3Client {
         connect.deleteObject(bucketName, fileName);
     }
 
-    public Bucket getBucket(String bucketName) {
+    public boolean isBucketExist(String bucketName) {
         List<Bucket> buckets = listBuckets();
         for (Bucket bucket : buckets) {
             if (bucketName.equals(bucket.getName())) {
-                return bucket;
+                return true;
             }
         }
-        throw new RuntimeException(String.format("Bucket: %s can't be found.", bucketName));
+        return false;
     }
-
 }

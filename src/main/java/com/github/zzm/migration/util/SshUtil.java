@@ -20,19 +20,30 @@ public class SshUtil {
 
     public static List<String> listBuckets() throws IOException {
         User user = YamlUtil.parseUser();
-        Gateway sourceRgw = YamlUtil.parseSourceRgw();
-        String command = "sudo /usr/bin/radosgw-admin bucket list --uid=%s --name=client.radosgw.gateway";
-        String result = exec(String.format(command, user.getUid()), sourceRgw);
+        String command = String.format("sudo /usr/bin/radosgw-admin bucket list --uid=%s " +
+                "--name=client.radosgw.gateway", user.getUid());
+        String result = exec(command, YamlUtil.parseSourceRgw());
+        System.out.println(String.format("bucket list:%s", result));
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(result, new TypeReference<List<String>>() {});
     }
 
     public static boolean checkUserExist() {
         User user = YamlUtil.parseUser();
-        Gateway targetRgw = YamlUtil.parseTargetRgw();
-        String command = "sudo /usr/bin/radosgw-admin user info --uid=%s --name=client.radosgw.gateway";
-        String result = exec(String.format(command, user.getUid()), targetRgw);
-        System.out.println(result);
+        String command = String.format("sudo /usr/bin/radosgw-admin user info --uid=%s " +
+                "--name=client.radosgw.gateway", user.getUid());
+        String result = exec(command, YamlUtil.parseTargetRgw());
+        System.out.println(String.format("user info: %s", result));
+        return result.contains(user.getUid());
+    }
+
+    public static boolean createUser() {
+        User user = YamlUtil.parseUser();
+        String command = String.format("sudo /usr/bin/radosgw-admin user create --uid=%s " +
+                "--display-name=%s --access-key=%s --secret=%s --name=client.radosgw.gateway",
+                user.getUid(), user.getDisplayName(), user.getAccessKey(), user.getSecretKey());
+        String result = exec(command, YamlUtil.parseTargetRgw());
+        System.out.println(String.format("user info: %s", result));
         return result.contains(user.getUid());
     }
 

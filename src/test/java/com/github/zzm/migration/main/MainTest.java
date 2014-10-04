@@ -11,6 +11,7 @@ public class MainTest {
     @Test
     public void should_() throws Exception {
 //        System.out.println(SshUtil.listBuckets());
-        System.out.println(SshUtil.checkUserExist());
+//        System.out.println(SshUtil.checkUserExist());
+        System.out.println(SshUtil.createUser());
     }
 }
