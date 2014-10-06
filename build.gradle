@@ -50,6 +50,10 @@ distributions {
             }
 
             from { configurations.runtime.allArtifacts.files }
+
+            from(projectDir) {
+                include 'README.md'
+            }
         }
     }
 }
