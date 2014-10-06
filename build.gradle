@@ -1,3 +1,5 @@
+import groovy.transform.Field
+
 apply plugin: "java"
 apply plugin: "idea"
 
@@ -8,4 +10,40 @@ compileJava {
 
 dependencies {
     compile fileTree(dir: 'lib', include: ['*.jar'])
+}
+
+sourceSets {
+    test {
+        resources {
+            srcDir 'src/test/resource'
+        }
+    }
+}
+
+
+jar {
+    manifest {
+        attributes 'Main-Clas': 'com.github.zzm.migration.main.Main'
+
+        String libPath = 'lib'
+        String libJars = new File(libPath).list().findAll {
+            it.endsWith('.jar')
+        }.collect { "$libPath/$it" }.join(' ')
+
+        String configFiles = new File('src/main/resource').list().findAll {
+            it.endsWith('.yml')
+        }.collect { "config/$it" }.join(' ')
+
+        attributes 'Class-Path': libJars + ' ' + configFiles
+    }
+}
+
+task zip(type: Zip) {
+    from { configurations.runtime.allArtifacts.files }
+    into(project.name)
+
+//    classifier = 'lib'
+//    from projectDir
+//    include 'lib/**'
+//    include 'src/main/resource/**'
 }
