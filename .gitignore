@@ -13,3 +13,6 @@ hs_err_pid*
 *.ipr
 *.iml
 *.iws
+.gradle
+build
+.DS_Store

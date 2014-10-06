@@ -1,7 +1,6 @@
-import groovy.transform.Field
-
 apply plugin: "java"
 apply plugin: "idea"
+apply plugin: 'distribution'
 
 compileJava {
     sourceCompatibility = 1.6
@@ -20,7 +19,6 @@ sourceSets {
     }
 }
 
-
 jar {
     manifest {
         attributes 'Main-Clas': 'com.github.zzm.migration.main.Main'
@@ -38,12 +36,21 @@ jar {
     }
 }
 
-task zip(type: Zip) {
-    from { configurations.runtime.allArtifacts.files }
-    into(project.name)
+distributions {
+    main {
+        baseName = project.name
+        contents {
+            from('lib') {
+                include '*.jar'
+                into 'lib'
+            }
+            from('src/main/resource') {
+                include '*.yml'
+                into 'config'
+            }
 
-//    classifier = 'lib'
-//    from projectDir
-//    include 'lib/**'
-//    include 'src/main/resource/**'
+            from { configurations.runtime.allArtifacts.files }
+        }
+    }
 }
+
