@@ -21,7 +21,7 @@ sourceSets {
 
 jar {
     manifest {
-        attributes 'Main-Clas': 'com.github.zzm.migration.main.Main'
+        attributes 'Main-Class': 'com.github.zzm.migration.main.Main'
 
         String libPath = 'lib'
         String libJars = new File(libPath).list().findAll {
