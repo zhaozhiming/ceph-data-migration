@@ -28,11 +28,7 @@ jar {
             it.endsWith('.jar')
         }.collect { "$libPath/$it" }.join(' ')
 
-        String configFiles = new File('src/main/resource').list().findAll {
-            it.endsWith('.yml')
-        }.collect { "config/$it" }.join(' ')
-
-        attributes 'Class-Path': libJars + ' ' + configFiles
+        attributes 'Class-Path': '. ' + libJars
     }
 }
 
@@ -46,7 +42,7 @@ distributions {
             }
             from('src/main/resource') {
                 include '*.yml'
-                into 'config'
+                into '.'
             }
 
             from { configurations.runtime.allArtifacts.files }
