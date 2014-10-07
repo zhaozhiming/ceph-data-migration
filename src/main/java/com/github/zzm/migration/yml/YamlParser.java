@@ -5,8 +5,6 @@ import com.github.zzm.migration.model.User;
 import org.ho.yaml.Yaml;
 
 import java.io.InputStream;
-import java.net.URL;
-import java.security.CodeSource;
 
 public class YamlParser {
     private static User user = parse("user.yml", User.class);
@@ -27,14 +25,7 @@ public class YamlParser {
 
     private static <T> T parse(String fileName, Class<T> iclass) {
         try {
-            CodeSource src = YamlParser.class.getProtectionDomain().getCodeSource();
-            InputStream inputStream;
-            if (src != null) {
-                URL url = new URL(src.getLocation(), fileName);
-                inputStream = url.openStream();
-            } else {
-                inputStream = ClassLoader.getSystemResourceAsStream(fileName);
-            }
+            InputStream inputStream = ClassLoader.getSystemResourceAsStream(fileName);
             return Yaml.loadType(inputStream, iclass);
         } catch (Exception e) {
             throw new RuntimeException(String.format("parse yaml file failed. file: %s.", fileName));
