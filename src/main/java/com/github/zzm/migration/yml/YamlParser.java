@@ -28,8 +28,13 @@ public class YamlParser {
     private static <T> T parse(String fileName, Class<T> iclass) {
         try {
             CodeSource src = YamlParser.class.getProtectionDomain().getCodeSource();
-            URL url = new URL(src.getLocation(), fileName);
-            InputStream inputStream = url.openStream();
+            InputStream inputStream;
+            if (src != null) {
+                URL url = new URL(src.getLocation(), fileName);
+                inputStream = url.openStream();
+            } else {
+                inputStream = ClassLoader.getSystemResourceAsStream(fileName);
+            }
             return Yaml.loadType(inputStream, iclass);
         } catch (Exception e) {
             throw new RuntimeException(String.format("parse yaml file failed. file: %s.", fileName));
