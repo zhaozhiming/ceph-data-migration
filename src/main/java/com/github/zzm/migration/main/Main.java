@@ -1,9 +1,7 @@
 package com.github.zzm.migration.main;
 
-import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.*;
+import com.amazonaws.util.IOUtils;
 import com.github.zzm.migration.model.Result;
 import com.github.zzm.migration.model.User;
 import com.github.zzm.migration.s3.RadosGatewayS3Client;
@@ -13,7 +11,7 @@ import com.github.zzm.migration.yml.YamlParser;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
-import java.io.FileNotFoundException;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -67,10 +65,15 @@ public class Main {
         for (S3ObjectSummary object : objectSummaries) {
             try {
                 S3Object file = sourceClient.getObject(bucketName, object.getKey());
-                targetClient.putObject(bucketName, file.getKey(), file.getObjectContent());
+
+                byte[] bytes = IOUtils.toByteArray(file.getObjectContent());
+                ObjectMetadata objectMetadata = new ObjectMetadata();
+                objectMetadata.setContentLength(bytes.length);
+
+                targetClient.putObject(bucketName, file.getKey(), new ByteArrayInputStream(bytes), objectMetadata);
 
                 result.add1Success();
-            } catch (FileNotFoundException e) {
+            } catch (Exception e) {
                 System.err.println(String.format("upload file failed. file is /%s/%s", bucketName, object.getKey()));
                 result.add1Failed();
             }

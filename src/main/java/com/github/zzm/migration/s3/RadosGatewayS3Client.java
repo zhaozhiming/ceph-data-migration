@@ -31,9 +31,11 @@ public class RadosGatewayS3Client {
         return connect.listObjects(bucketName);
     }
 
-    public PutObjectResult putObject(String bucketName, String fileName, InputStream inputStream) throws FileNotFoundException {
+    public PutObjectResult putObject(String bucketName, String fileName,
+                                     InputStream inputStream, ObjectMetadata objectMetadata)
+            throws FileNotFoundException {
         return connect.putObject(
-                bucketName, fileName, inputStream, new ObjectMetadata());
+                bucketName, fileName, inputStream, objectMetadata);
     }
 
     public S3Object getObject(String bucketName, String objectName) {
